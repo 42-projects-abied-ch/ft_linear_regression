@@ -4,7 +4,7 @@ import sys
 import os
 import subprocess
 from simple_term_menu import TerminalMenu
-from train import Trainer
+from src.train import Trainer
 
 
 def train(trainer: Trainer):
@@ -18,7 +18,10 @@ def train(trainer: Trainer):
 
 def load_model():
     with open("model.json", "r"):
-        subprocess.run(["python3", "calculate_price.py"])
+        subprocess.run(
+            ["python3", "./src/calculate_price.py"],
+            check=True
+        )
 
 
 def main():
@@ -36,6 +39,10 @@ def main():
         else:
             train(trainer)
             load_model()
+    except subprocess.CalledProcessError as e:
+        print(f"ERROR: calculate_price.py exited with status {e.returncode}")
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == "__main__":

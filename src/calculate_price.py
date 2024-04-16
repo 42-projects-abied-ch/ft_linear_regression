@@ -29,16 +29,21 @@ class PricePrediction:
 
     def prompt_user(self) -> None:
         os.system("clear")
-        mileage = float(input("Please enter the mileage of your car: "))
+        
+        try:
+            mileage = float(input("Enter the mileage of your car: "))
+        except ValueError:
+            print("ERROR: Enter a valid float value.")
+            sys.exit(1)
         normalized_mileage = self.normalize_mileage(mileage)
         estimated_price = self.estimate_price(normalized_mileage)
         os.system("clear")
         if estimated_price < 0:
-            print("I do not think your car is sellable >_<")
+            print("This car is not sellable anymore")
             sys.exit(0)
         else:
             print(
-                f"The estimated price for a mileage of {int(mileage)} is: {estimated_price:.2f}€"
+                f"The estimated price for a mileage of {int(mileage)} is: {estimated_price:.2f}€."
             )
         options = ["Visualize prediction", "Exit"]
         menu = TerminalMenu(options)
@@ -78,5 +83,7 @@ class PricePrediction:
         plt.savefig("plot.png")
         plt.show()
 
-
-PricePrediction().prompt_user()
+try:
+    PricePrediction().prompt_user()
+except KeyboardInterrupt:
+    print("\nINFO: CTRL+C caught, exiting gracefully")

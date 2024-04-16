@@ -7,16 +7,24 @@ mileages = pd.read_csv("data.csv")
 mean_km = mileages["km"].mean()
 std_km = mileages["km"].std()
 
-mileages["normalized_km"] = (mileages["km"] - mean_km) / std_km
 
-learning_rate = 0.05
-iterations = 500
-convergence_threshold = 1e-4
+def normalize_mileage(mileage: int) -> float:
+    return (mileage - mean_km) / std_km
+
+
+mileages["normalized_km"] = normalize_mileage(mileages["km"])
+
 
 def estimate_price(normalized_mileage: float, theta: list[float]) -> float:
     return theta[0] + (theta[1] * normalized_mileage)
 
-def gradient_descent(mileages, learning_rate, convergence_threshold, iterations=500):
+
+def gradient_descent(
+    mileages: pd.DataFrame,
+    learning_rate: float,
+    convergence_threshold: float,
+    iterations: int = 500,
+) -> tuple[int, list[float]]:
 
     theta = np.zeros(2)
 
@@ -34,14 +42,25 @@ def gradient_descent(mileages, learning_rate, convergence_threshold, iterations=
         new_theta_0 = theta[0] - learning_rate * gradient_theta_0
         new_theta_1 = theta[1] - learning_rate * gradient_theta_1
 
-        if np.abs(new_theta_0 - theta[0]) < convergence_threshold and np.abs(new_theta_1 - theta[1]) < convergence_threshold:
+        if (
+            np.abs(new_theta_0 - theta[0]) < convergence_threshold
+            and np.abs(new_theta_1 - theta[1]) < convergence_threshold
+        ):
             return i + 1, theta
 
         theta[0], theta[1] = new_theta_0, new_theta_1
 
-    return iterations, theta 
+    return iterations, theta
 
-def hyperparameter_tuning(mileages: pd.DataFrame, learning_rates: list[float], convergence_thresholds: list[float]) -> tuple[float, float, int, np.ndarray]:
+
+def hyperparameter_tuning(
+    mileages: pd.DataFrame,
+    learning_rates: list[float],
+    convergence_thresholds: list[float],
+) -> tuple[float, float, int, np.ndarray]:
+    """
+    Tune the learning rate and convergence threshold to find the best hyperparameters
+    """
     best_learning_rate = None
     best_convergence_threshold = None
     best_iterations = float("inf")
@@ -58,22 +77,27 @@ def hyperparameter_tuning(mileages: pd.DataFrame, learning_rates: list[float], c
 
     return best_learning_rate, best_convergence_threshold, best_iterations, best_theta
 
+
 learning_rates = np.arange(0.001, 0.15, 0.02).tolist()
 convergence_thresholds = [1e-3, 1e-4, 1e-5, 1e-6]
 
-best_lr, best_ct, best_iters, theta = hyperparameter_tuning(mileages, learning_rates, convergence_thresholds)
-print(f"Best Learning Rate: {best_lr}, Best Convergence Threshold: {best_ct}, Iterations: {best_iters}, Theta: {theta}")
+best_lr, best_ct, best_iters, theta = hyperparameter_tuning(
+    mileages, learning_rates, convergence_thresholds
+)
+print(
+    f"Best Learning Rate: {best_lr}, Best Convergence Threshold: {best_ct}, Iterations: {best_iters}, Theta: {theta}"
+)
 
 x_values = np.linspace(mileages["km"].min(), mileages["km"].max(), 400)
-x_normalized = (x_values - mean_km) / std_km 
+x_normalized = (x_values - mean_km) / std_km
 y_values = estimate_price(x_normalized, theta)
 
 plt.figure(figsize=(10, 6))
-plt.scatter(mileages["km"], mileages["price"], color='blue', label='Actual Prices')
-plt.plot(x_values, y_values, color='red', label='Regression Line')
-plt.title('Car Price vs. Mileage')
-plt.xlabel('Mileage (km)')
-plt.ylabel('Price ($)')
+plt.scatter(mileages["km"], mileages["price"], color="blue", label="Actual Prices")
+plt.plot(x_values, y_values, color="red", label="Regression Line")
+plt.title("Car Price vs. Mileage")
+plt.xlabel("Mileage (km)")
+plt.ylabel("Price ($)")
 plt.legend()
 plt.grid(True)
 plt.savefig("plot.png")

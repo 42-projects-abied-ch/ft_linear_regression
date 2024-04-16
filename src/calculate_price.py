@@ -48,7 +48,7 @@ class PricePrediction:
         options = ["Visualize prediction", "Exit"]
         menu = TerminalMenu(options)
         index = menu.show()
-        if options[index] == "Yes":
+        if options[index] == "Visualize prediction":
             self.visualize({"km": mileage, "price": estimated_price})
 
     def visualize(self, estimated_datapoint: dict) -> None:

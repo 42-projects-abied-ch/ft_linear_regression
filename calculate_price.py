@@ -4,6 +4,7 @@ import numpy as np
 import json
 import pandas as pd
 import os
+import sys
 
 
 class PricePrediction:
@@ -32,11 +33,14 @@ class PricePrediction:
         normalized_mileage = self.normalize_mileage(mileage)
         estimated_price = self.estimate_price(normalized_mileage)
         os.system("clear")
-        print(f"The estimated price for a mileage of {mileage} is: {estimated_price}€\n")
-        print("Would you like to visualize the predicted datapoint in relation to the training data?")
-        options = [
-            "Yes",
-            "No"]
+        if estimated_price < 0:
+            print("I do not think your car is sellable >_<")
+            sys.exit(0)
+        else:
+            print(
+                f"The estimated price for a mileage of {int(mileage)} is: {estimated_price:.2f}€"
+            )
+        options = ["Visualize prediction", "Exit"]
         menu = TerminalMenu(options)
         index = menu.show()
         if options[index] == "Yes":
@@ -44,9 +48,7 @@ class PricePrediction:
 
     def visualize(self, estimated_datapoint: dict) -> None:
         mileages = pd.read_csv("data.csv")
-        x_values = np.linspace(
-            mileages["km"].min(), mileages["km"].max(), 400
-        )
+        x_values = np.linspace(mileages["km"].min(), mileages["km"].max(), 400)
         x_normalized = (x_values - self.mean_km) / self.std_km
         y_values = self.estimate_price(x_normalized)
 
@@ -60,13 +62,13 @@ class PricePrediction:
         plt.plot(x_values, y_values, color="red", label="Regression Line")
 
         plt.scatter(
-        [estimated_datapoint["km"]],
-        [estimated_datapoint["price"]],
-        color="green",
-        label="Estimated Price",
-        marker='o',  # You can change the marker style if you want
-        s=100  # Adjusts the size of the point
-    )
+            [estimated_datapoint["km"]],
+            [estimated_datapoint["price"]],
+            color="green",
+            label="Estimated Price",
+            marker="o",
+            s=500,
+        )
 
         plt.title("Car Price vs. Mileage")
         plt.xlabel("Mileage (km)")
@@ -78,4 +80,3 @@ class PricePrediction:
 
 
 PricePrediction().prompt_user()
-

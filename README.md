@@ -1,7 +1,7 @@
 # ft_linear_regression
 ## DONE:
-* model training
-* hyperparameter finetuning
+* model training logic
+* hyperparameter finetuning for minimal iterations
 * visualization of datapoints
 * visualization of regression line
 

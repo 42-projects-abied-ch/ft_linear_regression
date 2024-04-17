@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import json
 
+
 def estimate_price(normalized_mileage: float, theta: list[float]) -> float:
     return theta[0] + (theta[1] * normalized_mileage)
 

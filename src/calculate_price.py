@@ -50,7 +50,7 @@ class PricePrediction:
         menu = TerminalMenu(options)
         index = menu.show()
         if options[index] == "Visualize and Evaluate":
-            self.visualize({"km": mileage, "price": estimated_price})            
+            self.visualize({"km": mileage, "price": estimated_price})
 
     def visualize(self, estimated_datapoint: dict) -> None:
         mileages = pd.read_csv("data.csv")

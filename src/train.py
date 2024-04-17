@@ -36,7 +36,7 @@ class Trainer:
     def calculate_gradient(self, errors: list[float]) -> list[float]:
         """
         Calculate the gradient of the cost function with respect to theta.
-            - The Gradient is a vector that points in the direction of the 
+            - The Gradient is a vector that points in the direction of the
             steepest increase of the MSE (Mean Squared Error)
             - To minimize MSE, you adjust theta[0] & theta[1] in the
             opposite diection

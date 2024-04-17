@@ -1,4 +1,5 @@
 from simple_term_menu import TerminalMenu
+from evaluate import evaluate
 import matplotlib.pyplot as plt
 import numpy as np
 import json
@@ -29,7 +30,7 @@ class PricePrediction:
 
     def prompt_user(self) -> None:
         os.system("clear")
-        
+
         try:
             mileage = float(input("Enter the mileage of your car: "))
         except ValueError:
@@ -45,14 +46,18 @@ class PricePrediction:
             print(
                 f"The estimated price for a mileage of {int(mileage)} is: {estimated_price:.2f}€."
             )
-        options = ["Visualize prediction", "Exit"]
+        options = ["Visualize and Evaluate", "Exit"]
         menu = TerminalMenu(options)
         index = menu.show()
-        if options[index] == "Visualize prediction":
-            self.visualize({"km": mileage, "price": estimated_price})
+        if options[index] == "Visualize and Evaluate":
+            self.visualize({"km": mileage, "price": estimated_price})            
 
     def visualize(self, estimated_datapoint: dict) -> None:
         mileages = pd.read_csv("data.csv")
+        evaluation_metrics = evaluate(mileages)
+        print("\nEvaluation Metrics:")
+        for metric, value in evaluation_metrics.items():
+            print(f"{metric}: {value:.2f}")
         x_values = np.linspace(mileages["km"].min(), mileages["km"].max(), 400)
         x_normalized = (x_values - self.mean_km) / self.std_km
         y_values = self.estimate_price(x_normalized)
@@ -82,6 +87,7 @@ class PricePrediction:
         plt.grid(True)
         plt.savefig("plot.png")
         plt.show()
+
 
 try:
     PricePrediction().prompt_user()

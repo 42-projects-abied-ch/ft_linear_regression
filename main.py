@@ -9,7 +9,7 @@ from src.train import Trainer
 
 def train(trainer: Trainer):
     learning_rates = np.arange(0.001, 0.15, 0.02).tolist()
-    convergence_thresholds = [1e-3, 1e-4, 1e-5, 1e-6]
+    convergence_thresholds = [1e-3, 1e-4, 1e-5, 1e-6, 1e-7]
 
     trainer.hyperparameter_tuning(
         trainer.mileages, learning_rates, convergence_thresholds

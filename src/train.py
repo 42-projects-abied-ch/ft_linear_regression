@@ -23,6 +23,10 @@ class Trainer:
         return (mileage - self.mean_km) / self.std_km
 
     def estimate_price(self, normalized_mileage: float, theta: list[float]) -> float:
+        """
+        theta[0]: Intercept (Starting point of the line on the y-axis)
+        theta[1]: Slope
+        """
         return theta[0] + (theta[1] * normalized_mileage)
 
     def convergence_threshold_reached(

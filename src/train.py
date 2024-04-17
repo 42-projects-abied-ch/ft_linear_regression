@@ -16,6 +16,10 @@ class Trainer:
         self.best_theta = None
 
     def normalize_mileage(self, mileage: int) -> float:
+        """
+        Nomralizes the values to reduce discrepancies caused by
+        big differences in mileage
+        """
         return (mileage - self.mean_km) / self.std_km
 
     def estimate_price(self, normalized_mileage: float, theta: list[float]) -> float:
@@ -30,7 +34,14 @@ class Trainer:
         )
 
     def calculate_gradient(self, errors: list[float]) -> list[float]:
-        gradient_theta = [0] * 2
+        """
+        Calculate the gradient of the cost function with respect to theta.
+            - The Gradient is a vector that points in the direction of the 
+            steepest increase of the MSE (Mean Squared Error)
+            - To minimize MSE, you adjust theta[0] & theta[1] in the
+            opposite diection
+        """
+        gradient_theta = np.zeros(2)
         gradient_theta[0] = np.mean(errors)
         gradient_theta[1] = np.mean(errors * self.mileages["normalized_km"])
         return gradient_theta
@@ -38,7 +49,11 @@ class Trainer:
     def calculate_new_theta(
         self, theta: list[float], gradient_theta: list[float], learning_rate: float
     ) -> list[float]:
-        new_theta = [0, 0]
+        """
+        Calculate the new theta values by subtrcting the product of the learning rate
+        and the gradient from the current theta values.
+        """
+        new_theta = np.zeros(2)
         new_theta[0] = theta[0] - learning_rate * gradient_theta[0]
         new_theta[1] = theta[1] - learning_rate * gradient_theta[1]
         return new_theta
@@ -60,7 +75,18 @@ class Trainer:
         convergence: float,
         iterations: int = 500,
     ) -> tuple[int, list[float]]:
+        """
+        Gradient Descent is an optimization algorithm used to minimize some function by
+        iteratively moving in the direction of steepest descent.
 
+            1. Initialize theta to 0.
+            2. For each iteration:
+                a. Calculate the predictions using the current theta.
+                b. Calculate the errors.
+                c. Calculate the gradient of the cost function.
+                d. Update the theta.
+                e. Check if the convergence threshold is reached.
+        """
         theta = np.zeros(2)
 
         for i in range(iterations):
